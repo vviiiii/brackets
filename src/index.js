@@ -4,43 +4,41 @@ module.exports = function check(str, bracketsConfig) {
         return false;
     }
 
-    let pairs = {};
 
+    let pairs = {};
+    //make open and close pairs(key=open and value=close)
     for (let i = 0; i < bracketsConfig.length; i++) {
         for (let j = 0; j < bracketsConfig[i].length; j++) {
-            // console.log(bracketsConfig[i][j]);
             if (bracketsConfig[i][j + 1]) {
                 pairs[bracketsConfig[i][j]] = bracketsConfig[i][j + 1];
             }
 
         }
     }
-    // console.log('pairs', pairs);
-
 
     let arrStack = [];
-
+    //check str on open and close
+    //make stack for keys(open)
     for (let i = 0; i < str.length; i++) {
-        // console.log('Object.keys(pairs).includes(str[i])', Object.keys(pairs).includes(str[i]));
-        // console.log('pairs[str[i] != str[i]', pairs[str[i]]);
-        if (Object.keys(pairs).includes(str[i])) {
-            if (pairs[str[i]] != str[i]) {
-                arrStack.push(str[i])
+        let elem = str[i];
+
+        if (Object.keys(pairs).includes(elem)) {
+            // if  key===value and last elem in stack === elem --> pop last elem, else push elem in stack 
+            if (pairs[elem] === elem && elem === arrStack[arrStack.length - 1]) {
+                arrStack.pop();
+            } else {
+                arrStack.push(elem);
             }
 
-        } else if (Object.values(pairs).includes(str[i])) {
+        } else { //if elem in values, then compare with last elem in arrstack
             let last = pairs[arrStack.pop()];
-            // console.log('last', last);
-            // console.log('str[i]', str[i]);
-            if (!(last === str[i])) {
+            if (last !== elem) {
                 return false;
             }
-        } else {
-            return undefined;
         }
     }
-    console.log('arrStack', arrStack);
 
+    //if array not empty-> false
     if (arrStack.length) {
         return false;
     } else {
