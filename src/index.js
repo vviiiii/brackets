@@ -1,49 +1,33 @@
 module.exports = function check(str, bracketsConfig) {
-    // your solution
-    if (str.length % 2 != 0) {
-        return false;
-    }
+    if (str.length % 2 != 0) return false;
 
-
-    let pairs = {};
-    //make open and close pairs(key=open and value=close)
-    for (let i = 0; i < bracketsConfig.length; i++) {
-        for (let j = 0; j < bracketsConfig[i].length; j++) {
-            if (bracketsConfig[i][j + 1]) {
-                pairs[bracketsConfig[i][j]] = bracketsConfig[i][j + 1];
-            }
-
-        }
-    }
-
-    let arrStack = [];
-    //check str on open and close
-    //make stack for keys(open)
+    let stack = [];
     for (let i = 0; i < str.length; i++) {
         let elem = str[i];
+        for (let j = 0; j < bracketsConfig.length; j++) {
+            let bracketOpen = bracketsConfig[j][0];
+            let bracketClose = bracketsConfig[j][1];
 
-        if (Object.keys(pairs).includes(elem)) {
-            // if  key===value and last elem in stack === elem --> pop last elem, else push elem in stack 
-            if (pairs[elem] === elem && elem === arrStack[arrStack.length - 1]) {
-                arrStack.pop();
-            } else {
-                arrStack.push(elem);
-            }
+            if ((elem == bracketOpen)) {
+                if (bracketOpen != bracketClose) {
+                    stack.push(elem);
+                    break;
+                } else if (stack[stack.length - 1] === elem) {
+                    stack.pop();
+                    break;
+                } else {
+                    stack.push(elem);
+                    break;
+                }
 
-        } else { //if elem in values, then compare with last elem in arrstack
-            let last = pairs[arrStack.pop()];
-            if (last !== elem) {
-                return false;
+            } else if ((elem == bracketClose) && (stack[stack.length - 1] == bracketOpen)) {
+                stack.pop();
+                break;
             }
         }
+
     }
 
-    //if array not empty-> false
-    if (arrStack.length) {
-        return false;
-    } else {
-        return true;
-    }
-
-
+    if (stack.length === 0) return true;
+    return false;
 }
